@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     final Handler handler = new Handler();
     final int delay = 1000;
     Intent intent;
-
+/*
     Runnable runnable = new Runnable() {
         public void run() {
             currentlyRunningApp = getCurrentApp();
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+ */
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,30 +50,36 @@ public class MainActivity extends AppCompatActivity {
         btnMain = findViewById(R.id.btn_main);
     }
 
+
+    //Permission for UsageStatsManager to work ( function: "getCurrentApp")
     public void givePermissions1(View view)
     {
         startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
     }
 
-    public void givePermissions2(View view){
+
+    //Permission for starting new intent even when app is in background to work (function: "startListening")
+    public void givePermissions2(View view)
+    {
         startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION));
     }
+
 
     public void startListening(View view)
     {
         if(!activated){
+
+            //Sad tries to make this shit work with a service or a handler:
             //startService(new Intent(this, CheckForAppsAndDisplayLock.class));
+            //handler.postDelayed(runnable,delay);
             activated = true;
             btnMain.setText("Deactivate Lock");
             System.out.println("Lock activated.");
-            intent = new Intent(this, LockScreen.class);
-            handler.postDelayed(runnable,delay);
-
-          /*  while (activated) {
+            while (activated) {
                 currentlyRunningApp = getCurrentApp();
                 if (currentlyRunningApp.equals("com.whatsapp")) {
                     System.out.println("Whatsapp detected. Showing Lockscreen...");
-
+                    intent = new Intent(this, LockScreen.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                     activated = false;
@@ -84,20 +91,21 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
-           */
         }
         else{
             activated = false;
+
             //stopService(new Intent(this, CheckForAppsAndDisplayLock.class));
             btnMain.setText("Activate Lock");
             System.out.println("Lock deactivated.");
         }
     }
-
+/*
     public void killHandler(){
         handler.removeCallbacks(runnable);
     }
+
+ */
     private String getCurrentApp() {
         String topPackageName = "None";
         @SuppressLint("WrongConstant") UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService("usagestats");
@@ -117,5 +125,4 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(topPackageName);
         return topPackageName;
     }
-
 }
