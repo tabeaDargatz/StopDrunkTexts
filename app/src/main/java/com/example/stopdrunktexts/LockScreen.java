@@ -65,9 +65,8 @@ public class LockScreen extends AppCompatActivity
 
     private void generateQuestionAnswer()
     {
-        a = (int)(Math.random() * 41) + 10;
-        b = (int)(Math.random() * 41) + 10;
-        o = (int) (Math.random() * 3) + 1;
+
+        o = (int) (Math.random() * 4) + 1;
         switch (o)
         {
             case 1:
@@ -89,19 +88,18 @@ public class LockScreen extends AppCompatActivity
 
 
             case 3:
+                a = (int)(Math.random() * 41) + 10;
+                b = (int)(Math.random() * 41) + 10;
                 questionText.setText("What is "+ a+ " * " +b + "?");
                 answer = a*b;
                 break;
 
 
             case 4:
+                a = (int)(Math.random() * 5751) + 1014;
+                b = (int)(Math.random() * 5552) + 1213;
                 questionText.setText("What is "+ a+ " + " +b + "?");
                 answer = a+b;
-                break;
-
-            case 5:
-                questionText.setText("What is "+ a+ " - " +b + "?");
-                answer = a-b;
                 break;
 
             default:
