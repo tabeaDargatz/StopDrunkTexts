@@ -7,9 +7,6 @@ import android.app.usage.UsageStatsManager;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.window.SplashScreen;
-
-import androidx.annotation.RequiresApi;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -21,17 +18,23 @@ public class CheckForAppsAndDisplayLock extends Service {
     Handler handler = new Handler();
     Intent i;
     final int delay = 1000;
+    @Override
+    public void onDestroy() {
+        handler.removeCallbacks(runnable);
+        super.onDestroy();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        i = new Intent(getApplicationContext(), MainActivity.class);
+
         handler.postDelayed( runnable = new Runnable() {
             public void run() {
                 currentlyRunningApp = getCurrentApp();
                 if (currentlyRunningApp.equals("com.whatsapp"))
                 {
                     System.out.println("Whatsapp detected. Showing lockscreen...");
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i = new Intent(getApplicationContext(), LockScreen.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(i);
                     handler.removeCallbacks(this);
                     stopSelf();
@@ -42,7 +45,10 @@ public class CheckForAppsAndDisplayLock extends Service {
         return START_STICKY;
     }
 
-
+    /*TODO: Works like crap, needs fixing.
+       should only return the app that is actually in foreground
+       currently returns any application that performs an action, if not actively used by user (i.e. receiving a text via whatsapp makes function return whatsapp)
+     */
     private String getCurrentApp() {
         String topPackageName = "None";
         @SuppressLint("WrongConstant") UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService("usagestats");
@@ -65,11 +71,7 @@ public class CheckForAppsAndDisplayLock extends Service {
     }
 
 
-    @Override
-    public void onDestroy() {
-        handler.removeCallbacks(runnable);
-        super.onDestroy();
-    }
+
 
 
     //Not used but needs to be here

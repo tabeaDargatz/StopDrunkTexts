@@ -1,5 +1,6 @@
 package com.example.stopdrunktexts;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ public class LockScreen extends AppCompatActivity
         headerText = findViewById(R.id.txt_header);
         enteredAnswer = findViewById(R.id.editTxt_answer);
         generateQuestionAnswer();
+        startService(new Intent(this, CheckForAppsAndDisplayLock.class));
     }
 
     @Override
@@ -40,6 +42,7 @@ public class LockScreen extends AppCompatActivity
     {
         String enteredanswer = enteredAnswer.getText().toString();
         if(answer == Integer.parseInt(enteredanswer)){
+            stopService(new Intent(this, CheckForAppsAndDisplayLock.class));
             finishAndRemoveTask();
         }
         else{
