@@ -39,25 +39,6 @@ public class CheckForAppsAndDisplayLock extends Service {
                 handler.postDelayed(this, delay);
             }
         }, delay);
-
-      /*  while (!done) {
-            currentlyRunningApp = getCurrentApp();
-            if (currentlyRunningApp.equals("com.whatsapp"))
-            {
-                System.out.println("Whatsapp detected. Showing Lockscreen...");
-                Intent i = new Intent(this, LockScreen.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(i);
-                done = true;
-                stopSelf();
-            }
-
-            try {
-                sleep(800);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } */
         return START_STICKY;
     }
 
@@ -67,7 +48,8 @@ public class CheckForAppsAndDisplayLock extends Service {
         @SuppressLint("WrongConstant") UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService("usagestats");
         long time = System.currentTimeMillis();
         List<UsageStats> stats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 3000, time);
-        // Sort the stats by the last time used
+
+        //Sorting by last app used
         if (stats != null) {
             SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
             for (UsageStats usageStats : stats) {
@@ -89,12 +71,10 @@ public class CheckForAppsAndDisplayLock extends Service {
         super.onDestroy();
     }
 
-    public CheckForAppsAndDisplayLock() {
-    }
 
+    //Not used but needs to be here
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

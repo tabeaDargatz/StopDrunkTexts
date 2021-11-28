@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     final int delay = 1000;
     Intent intent;
 /*
+Shitty handler stuff that doesn't work:
     Runnable runnable = new Runnable() {
         public void run() {
             currentlyRunningApp = getCurrentApp();
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    //TODO: Ask for permissions on app start if not already granted, remove permission buttons or hide them in sidebar
+
     //Permission for UsageStatsManager to work ( function: "getCurrentApp")
     public void givePermissions1(View view)
     {
@@ -67,12 +70,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void startListening(View view)
     {
-        if(!activated){
-
+        if(!activated)
+        {
             //Sad tries to make this shit work with a service or a handler:
             //startService(new Intent(this, CheckForAppsAndDisplayLock.class));
             //handler.postDelayed(runnable,delay);
             activated = true;
+
+            //TODO: Somehow the text change is not displayed... maybe the activity doesn't update or some shit
+            // that's a problem for future me (Should work when I get the fucking handler to work... hopefully)
             btnMain.setText("Deactivate Lock");
             System.out.println("Lock activated.");
             while (activated) {
@@ -94,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             activated = false;
-
             //stopService(new Intent(this, CheckForAppsAndDisplayLock.class));
             btnMain.setText("Activate Lock");
             System.out.println("Lock deactivated.");
@@ -106,12 +111,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
  */
+
+
+
+    /*TODO: Works like crap, needs fixing.
+       should only return the app that is actually in foreground
+       currently returns any application that performs an action, if not actively used by user (i.e. receiving a text via whatsapp makes function return whatsapp)
+     */
+
+    //Retrieves a list of apps used in the last 3 seconds and returns the package name of the top most application
     private String getCurrentApp() {
         String topPackageName = "None";
         @SuppressLint("WrongConstant") UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService("usagestats");
         long time = System.currentTimeMillis();
         List<UsageStats> stats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 3000, time);
-        // Sort the stats by the last time used
+        //Sorting to find last app used
         if (stats != null) {
             SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
             for (UsageStats usageStats : stats) {
