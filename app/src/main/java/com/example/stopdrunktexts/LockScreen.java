@@ -12,13 +12,15 @@ import androidx.appcompat.app.AppCompatActivity;
 public class LockScreen extends AppCompatActivity
 {
 
-    int a;
-    int b;
-    int answer;
+    int a = 34;
+    int b = 12;
+    int answer = 0;
     int o = 0;
+    int wrongAnswers = 0;
     TextView questionText;
     TextView headerText;
     EditText enteredAnswer;
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -30,35 +32,50 @@ public class LockScreen extends AppCompatActivity
         enteredAnswer = findViewById(R.id.editTxt_answer);
         generateQuestionAnswer();
         startService(new Intent(this, CheckForAppsAndDisplayLock.class));
+        toast = new Toast(getApplicationContext());
+        toast = Toast.makeText(getApplicationContext(),
+                "Hi Maciej :)",
+                Toast.LENGTH_LONG);
     }
 
     @Override
     public void onBackPressed()
     {
-        headerText.setText("There is no escape. :) Now answer the question.");
+        toast.setText("There is no escape. :) Now answer the question.");
+        toast.show();
     }
 
     public void checkSolution(View view)
     {
         String enteredanswer = enteredAnswer.getText().toString();
-        if(answer == Integer.parseInt(enteredanswer)){
-            stopService(new Intent(this, CheckForAppsAndDisplayLock.class));
-            finishAndRemoveTask();
-        }
-        else{
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "Answer incorrect. Maybe you shouldn't text her, old man...",
-                    Toast.LENGTH_SHORT);
+        if(enteredanswer.isEmpty())
+        {
+            toast.setText("Too drunk to even enter an answer...?");
             toast.show();
         }
 
+        else{
+            if(answer == Integer.parseInt(enteredanswer)){
+                toast.setText("Hm. I guess you win this time. Unlocking...");
+                toast.show();
+                stopService(new Intent(this, CheckForAppsAndDisplayLock.class));
+                finishAndRemoveTask();
+            }
+            else if(wrongAnswers < 2){
+                toast.setText("Answer incorrect. Maybe you shouldn't text her, old man...");
+                toast.show();
+                wrongAnswers++;
+            }
+            else{
+                wrongAnswers = 0;
+                newQuestionAnswer();
+            }
+        }
     }
 
-    public void newQuestionAnswer(View view){
+    public void newQuestionAnswer(){
         generateQuestionAnswer();
-        Toast toast = Toast.makeText(getApplicationContext(),
-                "New question generated.",
-                Toast.LENGTH_SHORT);
+        toast.setText("Stop guessing. That won't work, I'll just generate a new question, idiot!");
         toast.show();
     }
 
@@ -89,7 +106,15 @@ public class LockScreen extends AppCompatActivity
 
             case 3:
                 a = (int)(Math.random() * 41) + 10;
+                while(a == 10 || a == 20 || a == 30 || a == 40 || a == 50){
+                    a = (int)(Math.random() * 41) + 10;
+                }
                 b = (int)(Math.random() * 41) + 10;
+                while(b == 10 || b == 20 || b == 30 || b == 40 || b == 50){
+                    a = (int)(Math.random() * 41) + 10;
+                }
+
+
                 questionText.setText("What is "+ a+ " * " +b + "?");
                 answer = a*b;
                 break;
