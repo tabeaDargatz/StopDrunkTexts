@@ -19,7 +19,7 @@ import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    final Handler handler = new Handler(Looper.myLooper());
+    final Handler handler = new Handler(Looper.getMainLooper());
     final int delay = 1000;
     boolean activated = false;
     Button btnMain;
@@ -27,9 +27,6 @@ public class MainActivity extends AppCompatActivity {
     Intent intent;
     boolean test = false;
 
-    public void testActivate(View view){
-        test = true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             currentlyRunningApp = getCurrentApp();
             if (currentlyRunningApp.equals("com.whatsapp")) {
-                System.out.println("Whatsapp detected. Showing lockscreen...");
-                openLockScreen();
                 openLockScreen();
                 handler.removeCallbacks(runnable);
             }
@@ -62,10 +57,9 @@ public class MainActivity extends AppCompatActivity {
         intent = new Intent(this, LockScreen.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
+        finish();
     }
 
-    //TODO: Somehow the text change is not displayed... maybe the activity doesn't update or some shit
-    // that's a problem for future me (Should work when I get the fucking handler to work... hopefully)
     public void startListening(View view)
     {
         if(!activated)
